@@ -9,7 +9,7 @@ Just make a simple
 gcc packer.c -o packer && gcc test_re.c -o test
 ```
 
-Next it you can pack your elf file with differents option
+Next it you can pack your elf file with differents options
 
 ```
 ./packer test xor
