@@ -43,9 +43,9 @@ Another encryption of the .text
 The target file will be packed as it : 
 
 ```C
-    		base_addr[i] = ~base_addr[i] ^ random_int;
-		base_addr[i] ^= x;
-		x = ~x;
+    base_addr[i] = ~base_addr[i] ^ random_int;
+    base_addr[i] ^= x;
+    x = ~x;
 ```
 
 Where base_addr[i] represents the bytes of the .text, random_int is a random int, and x another random number between 5 and 42
