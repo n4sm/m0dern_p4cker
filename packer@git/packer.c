@@ -968,7 +968,10 @@ int complexe_encrypt(char *target_file){
 	size_t len_text;
 	off_t txt_offset;
 	size_t len_txt_seg=0;
-	int x=5;
+	
+	srand(time(NULL)); 
+	int x = 1 + rand() % (42 - 1 + 5);
+
 
 	srand(time(NULL)); 
 	int random_int = 1 + rand() % (255 - 1 + 1);
@@ -1164,7 +1167,9 @@ int complexe_encrypt_pie(char *target_file){
 	size_t len_txt_seg=0;
 	size_t len_load = 0;
 	int bits=0;
-	int x=42;
+
+	srand(time(NULL)); 
+	int x = 1 + rand() % (42 - 1 + 5);
 
 	srand(time(NULL)); 
 	int random_int = 1 + rand() % (255 - 1 + 1);
