@@ -297,7 +297,7 @@ int xor_encrypt(char *target_file){
 	
 	fd = open(target_file, O_RDWR);
 
-	char *path_stub = "/home/mov/prog_/prog/C-C++/project_disass/packer@git/stub_xor";
+	char *path_stub = "stub_xor";
 
 	fd_stub = open(path_stub, O_RDWR);
 
@@ -474,7 +474,7 @@ int xor_encrypt_pie(char *target_file){
 	
 	fd = open(target_file, O_RDWR);
 
-	char *path_stub = "/home/mov/prog_/prog/C-C++/project_disass/packer@git/stub_xor_pie";
+	char *path_stub = "stub_xor_pie";
 
 	fd_stub = open(path_stub, O_RDWR);
 
@@ -629,7 +629,7 @@ int not_encrypt(char *target_file){
 	
 	fd = open(target_file, O_RDWR);
 
-	char *path_stub = "/home/mov/prog_/prog/C-C++/project_disass/packer@git/stub_not";
+	char *path_stub = "stub_not";
 
 	fd_stub = open(path_stub, O_RDWR);
 
@@ -786,7 +786,7 @@ int not_encrypt_pie(char *target_file){
 	
 	fd = open(target_file, O_RDWR);
 
-	char *path_stub = "/home/mov/prog_/prog/C-C++/project_disass/packer@git/stub_not_pie";
+	char *path_stub = "stub_not_pie";
 
 	fd_stub = open(path_stub, O_RDWR);
 
@@ -816,7 +816,7 @@ int not_encrypt_pie(char *target_file){
 			exit(-1);
 		}
 
-		char *path_stub_32 = "/home/mov/prog_/prog/C-C++/project_disass/packer@git/stub_not_pie_32";
+		char *path_stub_32 = "stub_not_pie_32";
 
 		fd_stub = open(path_stub, O_RDWR);
 
@@ -980,7 +980,7 @@ int complexe_encrypt(char *target_file){
 	
 	fd = open(target_file, O_RDWR);
 
-	char *path_stub = "/home/mov/prog_/prog/C-C++/project_disass/packer@git/stub_rol";
+	char *path_stub = "stub_rol";
 
 	fd_stub = open(path_stub, O_RDWR);
 
@@ -1176,7 +1176,7 @@ int complexe_encrypt_pie(char *target_file){
 	
 	fd = open(target_file, O_RDWR);
 
-	char *path_stub = "/home/mov/prog_/prog/C-C++/project_disass/packer@git/stub_rol_pie";
+	char *path_stub = "stub_rol_pie";
 
 	fd_stub = open(path_stub, O_RDWR);
 
