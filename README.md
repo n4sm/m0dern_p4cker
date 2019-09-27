@@ -3,49 +3,57 @@ Just a modern packer for Elf binaries ( linux executables )
 
 # Installation
 
-just make a Simple
+Just make a simple
 
 ```
-gcc packer.c -o packer && gcc test_re.c -o test
+chmod +x make.sh && ./make.sh
 ```
 
-next it you can pack yoUr elf file with dIfferents options
+# Use
 
-```
-./packer test xor
-```
+There is a small script shell which regererates the test executale : regen.sh
 
-it applicates a Simple xor encRyption on the .text with a random key. U
+You have just to do :
 
-
-// ===============================================================================
-
-It applicateS a Simple not and next xor encryption on the .text with a random key
-
-```
-./packer test not
+```shell
+./regen.sh
 ```
 
-the file will be packEd as it :
+Thus test is recompiled.
+
+# Options
+
+```shell
+Help : 
+                ./main <target_file> xor : target_file is encrypted (only xor encryption) with a random key 
+                ./main <target_file> not : target_file is encrypted (xor and not encryption) with a random key 
+                ./main <target_file> xorp : target_file is encrypted (complex encryption) with a random key
+```
+
+#xor
+
+Encryption : 
 
 ```C
-  base_addr[i] = ~base_addr[i] ^ random_int;
+base_addr[i] ^= random_int;
 ```
 
-// ================================================================================
+where base_addr[i] represents each bytes of the executable, and random_int a random int ^^
 
-```
-./packer test xorp
-```
-
-another encryption of the .text
-
-the target file will be packed as it :
+#not
 
 ```C
-    base_addr[i] = ~base_addr[i] ^ random_int;
-    base_addr[i] ^= x;
-    x = ~x;
+base_addr[i] = ~base_addr[i] ^ random_int;
 ```
 
-where base_addr[i] represents the bytes of the .text, random_int is a random int, and x another random number between 5 and 42
+where base_addr[i] represents each bytes of the executable, and random_int a random int ^^
+
+#xorp
+
+```C
+base_addr[i] = ~base_addr[i] ^ random_int;
+base_addr[i] ^= x;
+x = ~x;
+```
+
+where base_addr[i] represents each bytes of the executable, and random_int a random int ^^
