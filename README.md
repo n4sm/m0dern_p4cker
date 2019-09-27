@@ -1,4 +1,4 @@
-# Awesome_packer
+# m0der_p4cker
 Just a modern packer for Elf binaries ( linux executables )
 
 # Installation
