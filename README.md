@@ -30,7 +30,7 @@ Help :
                 ./main <target_file> xorp : target_file is encrypted (complex encryption) with a random key
 ```
 
-#xor
+@XOR
 
 Encryption : 
 
@@ -40,7 +40,7 @@ base_addr[i] ^= random_int;
 
 where base_addr[i] represents each bytes of the executable, and random_int a random int ^^
 
-#not
+@NOT
 
 ```C
 base_addr[i] = ~base_addr[i] ^ random_int;
@@ -48,7 +48,7 @@ base_addr[i] = ~base_addr[i] ^ random_int;
 
 where base_addr[i] represents each bytes of the executable, and random_int a random int ^^
 
-#xorp
+@XORP
 
 ```C
 base_addr[i] = ~base_addr[i] ^ random_int;
