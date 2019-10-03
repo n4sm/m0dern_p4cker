@@ -38,7 +38,7 @@ Encryption :
 base_addr[i] ^= random_int;
 ```
 
-where base_addr[i] represents each bytes of the executable, and random_int a random int ^^
+where base_addr[i] represents each bytes of the .text, and random_int a random int ^^
 
 @NOT
 
@@ -46,7 +46,7 @@ where base_addr[i] represents each bytes of the executable, and random_int a ran
 base_addr[i] = ~base_addr[i] ^ random_int;
 ```
 
-where base_addr[i] represents each bytes of the executable, and random_int a random int ^^
+where base_addr[i] represents each bytes of the .text, and random_int a random int ^^
 
 @XORP
 
@@ -56,4 +56,4 @@ base_addr[i] ^= x;
 x = ~x;
 ```
 
-where base_addr[i] represents each bytes of the executable, and random_int a random int ^^
+where base_addr[i] represents each bytes of the .text, and random_int a random int ^^
