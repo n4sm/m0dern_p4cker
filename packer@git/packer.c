@@ -63,7 +63,7 @@ int main(int argc, char **argv){
 	
 	else if (argc != 2)
 	{
-		printf("Usage : <%s> <elf_target> <stub>\n", argv[0]);
+		printf("Usage : <%s> <elf_target> <stub>\n", argv[0]); // dedi a arobase
 	}
 
 	return 0;
