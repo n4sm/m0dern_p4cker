@@ -3,4 +3,4 @@ gcc test_re.c -o test
 
 chmod +x regen.sh
 
-echo "[*] test have main has been generated"
+echo "[*] test and main has been generated"
