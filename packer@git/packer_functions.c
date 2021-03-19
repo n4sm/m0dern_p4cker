@@ -42,12 +42,10 @@ int patch_target(void *p_entry, long pattern, int size, long patch) {
 	p_entry = (unsigned char *)p_entry;
 	int result;
 
-	for(long i = 0 ; i < size; i++)
-	{
+	for(long i = 0 ; i < size; i++) {
 		result = *((long*)(p_entry+i)) ^ pattern;
 
-		if(result == 0)
-		{
+		if(result == 0) {
 			*((long*)(p_entry+i)) = patch;
 			return 0;
 		}
@@ -55,170 +53,125 @@ int patch_target(void *p_entry, long pattern, int size, long patch) {
 	return -1;
 }
 
-// ==============================================================================================================================
+// =*=*=*=*=*=*=*=*=*=*=*=*=*=
 
-off_t search_section_name(char *sh_name_buffer[], Elf64_Ehdr *ptr, Elf64_Shdr *buffer_mdata_sh[], const char *section, uint64_t *len_sec){
-
-	for (size_t i = 0; i < ptr->e_shnum; i++)
-	{
-		if (!strcmp(sh_name_buffer[i], section))
-		{
+off_t search_section_name(char *sh_name_buffer[], Elf64_Ehdr *ptr, Elf64_Shdr *buffer_mdata_sh[], const char *section, uint64_t *len_sec) {
+	for (size_t i = 0; i < ptr->e_shnum; i++) {
+		if (!strcmp(sh_name_buffer[i], section)) {
 			*len_sec = buffer_mdata_sh[i]->sh_size;
 			return buffer_mdata_sh[i]->sh_offset;
 		}
-		
 	}
-	
 	return 1;
 }
 
-// ==============================================================================================================================
+// =*=*=*=*=*=*=*=*=*=*=*=*=*=
 
-size_t len_section(Elf64_Ehdr *ptr, Elf64_Shdr *buffer_mdata_sh[], const char *section){
-
+size_t len_section(Elf64_Ehdr *ptr, Elf64_Shdr *buffer_mdata_sh[], const char *section) {
 	size_t len=0;
 	char *sh_name_buffer[ptr->e_shnum];
 
 	parse_sh_name(ptr, buffer_mdata_sh, sh_name_buffer);
 
-	for (size_t i = 0; i < ptr->e_shnum; i++)
-	{
-		if (!strcmp(sh_name_buffer[i], section))
-		{
+	for (size_t i = 0; i < ptr->e_shnum; i++) {
+		if (!strcmp(sh_name_buffer[i], section)) {
 			len = buffer_mdata_sh[i]->sh_size;
 		}
-		
 	}
-
 	return len;
 }
 
-// ===========================================================================================================
+// =*=*=*=*=*=*=*=*=*=*=*=*=*=
 
 uint64_t search_base_addr(Elf64_Phdr *buffer_mdata_phdr[], Elf64_Ehdr *ptr){
+	unsigned long min = buffer_mdata_ph[0]->p_vaddr;
 
-	int j = 0;
-	uint64_t tab_addr[ptr->e_phnum];
-
-	for (size_t i = 1; i < ptr->e_phnum; i++) {
-
-		int type = buffer_mdata_phdr[i]->p_type;
-
-		if (buffer_mdata_phdr[i]->p_type == PT_LOAD)
-		{
-			tab_addr[j]  = buffer_mdata_phdr[i]->p_vaddr;
-			j++;
+	for (int i = 0; i< ptr->e_phnum; i++) {
+		if (buffer_mdata_ph[i]->p_type == PT_LOAD &&
+		    buffer_mdata_ph[i]->p_vaddr < min) {
+			min = buffer_mdata_ph[i]->p_vaddr;
 		}
 	}
-
-	int base_addr = tab_addr[0];
-
-	for (size_t i = 1; i < j; i++)
-	{
-		if (tab_addr[i] < base_addr){
-			base_addr = tab_addr[i];
-		}
-	}
-
-	return base_addr;
+	
+	return min;
 }
 
-// ===========================================================================================================
+// =*=*=*=*=*=*=*=*=*=*=*=*=*=
 
-char  *parse_sh_name(Elf64_Ehdr *ptr, Elf64_Shdr *buffer_mdata_sh[], char *sh_name_buffer[]){
-
+char **parse_sh_name(Elf64_Ehdr *ptr, Elf64_Shdr *buffer_mdata_sh[], char *sh_name_buffer[]){
 	Elf64_Shdr *shstrtab_header = (Elf64_Shdr *) ((char *)ptr + (ptr->e_shoff + ptr->e_shentsize * ptr->e_shstrndx));
-
 	const char *shstrndx = (const char *)ptr + shstrtab_header->sh_offset;
 
-	for (size_t i = 0; i < ptr->e_shnum; i++){
-
+	for (size_t i = 0; i < ptr->e_shnum; i++) {
 		sh_name_buffer[i] = (char *) (shstrndx + buffer_mdata_sh[i]->sh_name);
-
 	}
 
-	return 0;
+	return sh_name_buffer;
 }
 
-// ===========================================================================================================
+// =*=*=*=*=*=*=*=*=*=*=*=*=*=
 
 int parse_phdr(Elf64_Ehdr *ptr, Elf64_Phdr *buffer_mdata_ph[]){
-
 	size_t number_of_sections = ptr->e_phnum;
-
 	Elf64_Ehdr *ptr_2 = (Elf64_Ehdr *)ptr;
 
-	for (size_t i = 0; i < ptr->e_phnum; i++)
-	{
+	for (size_t i = 0; i < ptr->e_phnum; i++) {
 		buffer_mdata_ph[i]  = (Elf64_Phdr *) ((char *)ptr + (ptr_2->e_phoff + ptr_2->e_phentsize * i));
 	}
 
 	return 0;
 }
 
-// ===========================================================================================================
+// =*=*=*=*=*=*=*=*=*=*=*=*=*=
 
 int parse_shdr(Elf64_Ehdr *ptr, Elf64_Shdr *buffer_mdata_sh[]){
-
 	size_t number_of_sections = ptr->e_shnum;
-
 	Elf64_Ehdr *ptr_2 = (Elf64_Ehdr *)ptr;
 
-	for (size_t i = 0; i < ptr->e_shnum; i++)
-	{
+	for (size_t i = 0; i < ptr->e_shnum; i++) {
 		buffer_mdata_sh[i]  = (Elf64_Shdr *) ((char *)ptr + (ptr_2->e_shoff + ptr_2->e_shentsize * i));
 	}
 
 	return 0;
 }
 
-// ===========================================================================================================
+// =*=*=*=*=*=*=*=*=*=*=*=*=*=
 
-int x_pack_text(unsigned char *base_addr, size_t len_text, int random_int){
-
-	for (size_t i = 0; i < len_text; i++)
-	{
+int x_pack_text(unsigned char *base_addr, size_t len_text, int random_int) {
+	for (size_t i = 0; i < len_text; i++) {
 		base_addr[i] ^= random_int;
 	}
 	
 	return 0;
 }
 
-// ===========================================================================================================
+// =*=*=*=*=*=*=*=*=*=*=*=*=*=
 
 off_t search_section(const char *section, Elf64_Shdr *buffer_mdata_sh[], Elf64_Ehdr *ptr, int *i_sec){
-
 	off_t offset = 0;
 	Elf64_Shdr *shstrtab_header;
-
 	char *sh_name_buffer[ptr->e_shnum];
-
 	shstrtab_header = (Elf64_Shdr *) ((char *)ptr + (ptr->e_shoff + ptr->e_shentsize * ptr->e_shstrndx));
-
 	const char *shstrndx = (const char *)ptr + shstrtab_header->sh_offset;
 
-	for (size_t i = 0; i < ptr->e_shnum; i++){
-
+	for (size_t i = 0; i < ptr->e_shnum; i++) {
 		sh_name_buffer[i] = (char *)shstrndx + buffer_mdata_sh[i]->sh_name;
-
 	}
 
-	for (size_t i = 0; i < ptr->e_shnum; i++)
-	{
+	for (size_t i = 0; i < ptr->e_shnum; i++) {
 		if (strcmp(sh_name_buffer[i], section) == 0){
 			offset = buffer_mdata_sh[i]->sh_offset;
 			*i_sec = i;
 			return offset;
 		}
-
 	}
 
 	return -1;
 }
 
-// ===========================================================================================================
+// =*=*=*=*=*=*=*=*=*=*=*=*=*=
 
-int xor_encrypt(char *target_file){
+int xor_encrypt(char *target_file) {
 	int fd=0;
 	int fd_stub=0;
 	struct stat stat_file;
@@ -241,12 +194,11 @@ int xor_encrypt(char *target_file){
 
 	fd_stub = open(path_stub, O_RDWR);
 
-	if (fd == -1 || fd_stub == -1)
-	{
-		perror("Open has failed\n");
+	if (fd == -1 || fd_stub == -1) {
+		perror("Open failed\n");
 	}
 
-	if (fstat(fd, &stat_file) != 0 || fstat(fd_stub, &stat_stub) != 0){
+	if (fstat(fd, &stat_file) != 0 || fstat(fd_stub, &stat_stub) != 0) {
 		printf("[ERROR] fstat failed\n");
 		exit(-1);
 	}
@@ -274,14 +226,13 @@ int xor_encrypt(char *target_file){
 	parse_phdr(ptr, buffer_mdata_ph);
 	parse_phdr(s_ptr, buffer_mdata_ph_stub);
 
-	if (!search_base_addr(buffer_mdata_ph, ptr))
-	{
+	if (!search_base_addr(buffer_mdata_ph, ptr)) {
 		printf("This binary has the pie !\n");
 
 		close(fd);
 		close(fd_stub);
 
-		if (munmap(file_ptr, stat_file.st_size) != 0||munmap(ptr_stub, stat_stub.st_size) != 0){
+		if (munmap(file_ptr, stat_file.st_size) != 0||munmap(ptr_stub, stat_stub.st_size) != 0) {
 			printf("[ERROR] munmap failed\n");
 		}
 
@@ -301,10 +252,8 @@ int xor_encrypt(char *target_file){
 
 	size_t codecave = stat_stub.st_size;
 
-	for (size_t i = 0; i < ptr->e_phnum; i++)
-	{
-		if (buffer_mdata_ph[i]->p_type == PT_LOAD && buffer_mdata_ph[i]->p_flags == 0x5)
-		{
+	for (size_t i = 0; i < ptr->e_phnum; i++) {
+		if (buffer_mdata_ph[i]->p_type == PT_LOAD && buffer_mdata_ph[i]->p_flags == 0x5) {
 			size_t len_load = buffer_mdata_ph[i]->p_memsz;
 
 			len_text = len_section(ptr, buffer_mdata_sh, ".text");
@@ -315,11 +264,8 @@ int xor_encrypt(char *target_file){
 
 			txt_end = buffer_mdata_ph[i]->p_offset + buffer_mdata_ph[i]->p_filesz;
 
-		}
-		else
-		{
-			if (buffer_mdata_ph[i]->p_type == PT_LOAD && (buffer_mdata_ph[i]->p_offset - txt_end) < codecave)
-			{
+		} else {
+			if (buffer_mdata_ph[i]->p_type == PT_LOAD && (buffer_mdata_ph[i]->p_offset - txt_end) < codecave) {
 				codecave = buffer_mdata_ph[i]->p_offset - txt_end;
 			}
 		}	
@@ -327,8 +273,7 @@ int xor_encrypt(char *target_file){
 
 	off_t ptr_stub_text = search_section_name(sh_name_buffer, s_ptr, buffer_mdata_sh_stub, ".text", &len_sec);
 
-	if (len_stub > codecave)
-	{
+	if (len_stub > codecave) {
 		printf("Stub too big\n");
 	}
 
@@ -360,7 +305,7 @@ int xor_encrypt(char *target_file){
 
 	ptr->e_entry = (uint64_t)base + txt_end;
 
-	if (munmap(file_ptr, stat_file.st_size) != 0||munmap(ptr_stub, stat_stub.st_size) != 0){
+	if (munmap(file_ptr, stat_file.st_size) != 0||munmap(ptr_stub, stat_stub.st_size) != 0) {
 		printf("[ERROR] munmap failed\n");
 		exit(-1);
 	}
@@ -371,27 +316,18 @@ int xor_encrypt(char *target_file){
 	return 0;
 }
 
-// ===========================================================================================================
+// =*=*=*=*=*=*=*=*=*=*=*=*=*=
 
-int has_pie_or_not(Elf64_Phdr *buffer_mdata_ph[], Elf64_Ehdr *ptr){
-
-	for (size_t i = 0; i < ptr->e_phnum; i++)
-	{
-		if (buffer_mdata_ph[i]->p_type == PT_LOAD && buffer_mdata_ph[i]->p_flags == 0x5)
-		{
-			if (!buffer_mdata_ph[i]->p_vaddr)
-			{
+int has_pie_or_not(Elf64_Phdr *buffer_mdata_ph[], Elf64_Ehdr *ptr) {
+	for (size_t i = 0; i < ptr->e_phnum; i++) {
+		if (buffer_mdata_ph[i]->p_type == PT_LOAD && buffer_mdata_ph[i]->p_flags == 0x5) {
+			if (!buffer_mdata_ph[i]->p_vaddr) {
 				return 0;
-			}
-			else
-			{
+			} else {
 				return 1;
 			}
-			
 		}
-		
 	}
-
 }
 
 int xor_encrypt_pie(char *target_file){
